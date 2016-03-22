@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+{% load static from staticfiles %}
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Output data of {{base_search_item_value_map.application}} | Architecture admin</title>
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/base.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/login.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/dashboard.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/changelists.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/forms.css" %}" />
+<script type="text/javascript" src="{% static 'performance/js/jquery-1.8.3.min.js' %}"></script>
+<script src="{% static 'performance/js/highcharts.js' %}"></script>
+<script src="{% static 'performance/js/exporting.js' %}"></script>
+<script type="text/javascript">
+$(function () {
+    $('#content-main').highcharts({
+        chart: {
+          type: 'spline'
+        },
+
+        title : {
+          text : '{{base_search_item_value_map.application | title}}'
+        },
+
+        credits : false,
+
+        xAxis: {
+          type: 'category',
+          categories: [
+            {% for value_pair in result_fields_value_list %}
+              {{value_pair.0}},
+            {% endfor %}
+          ],
+          title: {
+            text: '{{graph_x_field}}'
+          }
+        },
+
+        yAxis: {
+          title: {
+            text: '{{graph_y_field}}'
+          },
+          min: 0
+        },
+
+        legend: {
+          enabled: false
+        },
+
+        plotOptions: {
+          spline: {
+            marker: {
+              enabled: true,
+              // the dot size
+              radius: 2
+            }
+          }
+        },
+
+        series: [{
+          data: [
+            {% for value_pair in result_fields_value_list %}
+            {
+              //color: '#00FF00',
+              text: "{% for alias_name, alias_value in value_pair.2.items %} \
+                {{alias_name}} : {{alias_value}}<br/>\
+              {% endfor %}\
+              ",
+              y: {{value_pair.1}}
+            },
+            {% endfor %}
+          ],
+          color: 'red',
+          marker: {
+            enabled : true,
+            fillColor : 'black'
+          },
+
+          tooltip: {
+            valueDecimals: 4,
+            headerFormat: '<span style="font-size: 10px">{{graph_x_field}}: {point.key}</span><br/>',
+            pointFormat: '<span style="color:{point.color}">\u25cf {{graph_y_field}}: {point.y}</span><br/>{point.text}'
+          }
+
+        }]
+    });
+});
+</script>
+</head>
+
+<body>
+<div id="container">
+
+  <!-- Header -->
+  <div id="header">
+      <div id="branding">
+        <h1 id="site-name"><a href="/admin/">Architecture Admin</a></h1>
+      </div>
+      <div id="user-tools">
+              Welcome to Data Searching ... 
+              <a href="/admin/logout/">Log out</a>
+      </div>
+  </div>
+  <!-- END Header -->
+
+  <div class="breadcrumbs">
+    <a href="/admin/">Home</a>
+    &rsaquo; <a href="/admin/performance/">Performance</a>
+    &rsaquo; <a href="{% url 'performance:search_index' %}">Search</a>
+    &rsaquo; {{base_search_item_value_map.application}} informations
+  </div>
+
+  <!-- Content -->
+  <div id="content" class="flex">
+    <li>Project     : {{base_search_item_value_map.project_name}}</li>
+    <li>CPU Type    : {{base_search_item_value_map.cpu_type}}</li>
+    <li>Record Time: {{base_search_item_value_map.begin_time}} ~ {{base_search_item_value_map.end_time}}</li>
+    <br>
+      {% for field, field_value in further_search_item_value_map.items %}
+    <li>{{field}}: {{field_value}}</li>
+      {% endfor %}
+    <ul class="object-tools">
+        <li>
+          <a href="{% url 'performance:search_index' %}" class="addlink">
+            Make a New Data Searching
+          </a>
+        </li>
+    </ul>
+
+    <div id="content-main" style="height: 400px; min-width: 310px">
+    </div>
+
+    <br class="clear" />
+  </div>
+  <!-- END Content -->
+
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+
+{# {% block title %}{{ title }} | {{ site_title|default:_('changed Django site admin') }}{% endblock %} #}
+{% block title %}{{ title }} | Architecture admin{% endblock %}
+
+{% block branding %}
+{# <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('meme Django administration') }}</a></h1> #}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">Architecture Admin</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

@@ -1,0 +1,2 @@
+This html file is copied from "site-packages/django/contrib/admin/templates/admin/".
+It will conver the original file when load templates file, because the "DIRS" is configured in TEMPLATES in project_name/settings.py

@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+{% load static from staticfiles %}
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Output data of {{base_search_item_value_map.application}} | Architecture admin</title>
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/base.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/login.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/dashboard.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/changelists.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/forms.css" %}" />
+<script type="text/javascript" src="{% static 'performance/js/jquery-1.8.3.min.js' %}"></script>
+<script src="{% static 'performance/js/highstock.js' %}"></script>
+<script src="{% static 'performance/js/exporting.js' %}"></script>
+<script type="text/javascript">
+$(function () {
+  var seriesOptions = [];
+  var colors = ['#DB843D', '#89A54E', '#3D96AE', '#80699B', '#92A8CD', '#A47D7C', '#B5CA92']
+
+    {% for cpu_type, result_fields_value_list in result_fields_map.items %}
+      seriesOptions[{{forloop.counter0}}] = {
+        name : '{{cpu_type}}',
+        color : colors[{{forloop.counter0}}],
+        marker: {
+          enabled : true,
+          fillColor : 'red'
+        },
+      data : [
+        {% for value_pair in result_fields_value_list %}
+          {
+            x:{{value_pair.0}},
+            text: "{% for alias_name, alias_value in value_pair.2.items %} \
+              {{alias_name}} : {{alias_value}}<br/>\
+            {% endfor %}\
+            ",
+            {% for field_name, field_value in value_pair.1.items %}
+              id: '{{field_name}}',
+              y: {{field_value}}
+            {% endfor %}
+          },
+        {% endfor %}
+      ],
+
+      tooltip: {
+        valueDecimals: 4,
+        // footerFormat: '<span style="font-size: 10px">{point.color}</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+        // pointFormat: '<span style="color:{point.color}">\u25cf</span> {point.id}: <b>{point.y}</b><br/>{point.text}'
+        pointFormat: '<span style="color:{point.color}">\u25cf {point.id}: {point.y}</span><br/>{point.text}'
+      }
+
+    };
+    {% endfor %}
+    // end for every series
+
+//      $.getJSON('{% static "performance/data.json" %}', function (data) {
+        // Create the chart
+        $('#content-main').highcharts('StockChart', {
+            rangeSelector : {
+              selected : 5
+            },
+            title : {
+              text : '{{base_search_item_value_map.application | title}}'
+            },
+
+            credits : false,
+            plotOptions: {
+              series: {
+                allowPointSelect: true,
+                point : {
+                  events: {
+                    click: function (event) {
+                      var point_text = this.text.replace(/\s/ig,"").replace(/<.*?>/ig,"\n");
+                      alert("The data related to your clicked point:\n\n" + 
+                            this.id + ": " + this.y + '\n' +
+                            point_text);
+                    }
+                  }
+                }
+              }
+            },
+
+            legend: {
+              enabled: true,
+              verticalAlign: 'bottom',
+              borderColor: 'black',
+              /*
+              align: 'right',
+              layout: 'vertical',
+              */
+           },
+
+           series: seriesOptions
+
+        });
+ //   });
+
+});
+</script>
+</head>
+
+<body>
+<div id="container">
+
+  <!-- Header -->
+  <div id="header">
+      <div id="branding">
+        <h1 id="site-name"><a href="/admin/">Architecture Admin</a></h1>
+      </div>
+      <div id="user-tools">
+              Welcome to Data Searching ... 
+              <a href="/admin/logout/">Log out</a>
+      </div>
+  </div>
+  <!-- END Header -->
+
+  <div class="breadcrumbs">
+    <a href="/admin/">Home</a>
+    &rsaquo; <a href="/admin/performance/">Performance</a>
+    &rsaquo; <a href="{% url 'performance:search_index' %}">Search</a>
+    &rsaquo; {{base_search_item_value_map.application}} informations
+  </div>
+
+  <!-- Content -->
+  <div id="content" class="flex">
+    <li>Project     : {{base_search_item_value_map.project_name}}</li>
+    <li>CPU Type    : {{base_search_item_value_map.cpu_type}}</li>
+    <li>Record Time: {{base_search_item_value_map.begin_time}} ~ {{base_search_item_value_map.end_time}}</li>
+    <br>
+      {% for field, field_value in further_search_item_value_map.items %}
+    <li>{{field}}: {{field_value}}</li>
+      {% endfor %}
+    <ul class="object-tools">
+        <li>
+          <a href="{% url 'performance:search_index' %}" class="addlink">
+            Make a New Data Searching
+          </a>
+        </li>
+    </ul>
+
+    <div id="content-main" style="height: 400px; min-width: 310px">
+    </div>
+
+    <br class="clear" />
+  </div>
+  <!-- END Content -->
+
+</div>
+</body>
+</html>

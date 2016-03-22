@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% load static from staticfiles %}
+<html lang="en-us" >
+<head>
+  <title>Output data of {{base_search_item_value_map.application}} | Architecture admin</title>
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/base.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/login.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/dashboard.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/changelists.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/forms.css" %}" />
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+<script type="text/javascript" src="{% static "performance/js/core.js" %}"></script>
+<script type="text/javascript" src="{% static "performance/js/jquery.js" %}"></script>
+<script type="text/javascript" src="{% static "performance/js/jquery.init.js" %}"></script>
+<script type="text/javascript" src="{% static "performance/js/actions.js" %}"></script>
+<script type="text/javascript" src="{% static "performance/js/table.sort.js" %}"></script>
+
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        $("tr input.action-select").actions();
+    });
+})(django.jQuery);
+</script>
+
+<script type="text/javascript">
+  window.onload = function()
+  {
+    new TableSorter("result_list");
+  }
+</script>
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+
+<body class=" app-performance change-list">
+
+<!-- Container -->
+<div id="container">
+  <!-- Header -->
+  <div id="header">
+      <div id="branding">
+        <h1 id="site-name"><a href="/admin/">Architecture Admin</a></h1>
+      </div>
+      <div id="user-tools">
+              Welcome to Data Searching ... 
+              <a href="/admin/logout/">Log out</a>
+      </div>
+  </div>
+  <!-- END Header -->
+    
+
+  <div class="breadcrumbs">
+    <a href="/admin/">Home</a>
+    &rsaquo; <a href="/admin/performance/">Performance</a>
+    &rsaquo; <a href="{% url 'performance:search_index' %}">Search</a>
+    &rsaquo; {{base_search_item_value_map.application}} informations
+  </div>
+
+
+  <!-- Content -->
+  <div id="content" class="flex">
+    <li>Project     : {{base_search_item_value_map.project_name}}</li>
+    <li>CPU Type    : {{base_search_item_value_map.cpu_type}}</li>
+    <li>Record Time: {{base_search_item_value_map.begin_time}} ~ {{base_search_item_value_map.end_time}}</li>
+    <br>
+      {% for field, field_value in further_search_item_value_map.items %}
+    <li>{{field}}: {{field_value}}</li>
+      {% endfor %}
+    <br>
+    <div id="content-main">
+      <ul class="object-tools">
+          <li>
+            <a href="{% url 'performance:search_index' %}" class="addlink">
+              Make a New Data Searching
+            </a>
+          </li>
+      </ul>
+      <div class="module" id="changelist">
+        <form id="changelist-form" action="" method="post" novalidate>
+        {% if kwargs.record_value_list %}
+          <div class="actions">
+            <p class="paginator">
+              &lt--------{{base_search_item_value_map.application}} Information ...... Machine Information --------&gt
+              Sliding to the right to Show All
+            </p>
+          </div>
+
+          <div class="results">
+            <table cellpadding="0" cellspacing="0" id="result_list">
+            <thead>
+            <tr>
+              <th scope="col"  class="sortable column-itemnumber">
+                <div class="text"><a>  No  </a></div>
+                <div class="clear"></div>
+              </th>
+              {% for field_name in kwargs.i_module_header %}
+              <th scope="col"  class="sortable column-{{field_name}}">
+                <div class="text"><a>{{field_name}}</a></div>
+                <div class="clear"></div>
+              </th>
+              {% endfor %}
+              <th scope="col"  class="sortable column-xxxx">
+                <div class="text"><a>Application &lt-&gt Machine</a></div>
+                <div class="clear"></div>
+              </th>
+              {% for field_name in kwargs.m_module_header %}
+              <th scope="col"  class="sortable column-{{field_name}}">
+                <div class="text"><a>{{field_name}}</a></div>
+                <div class="clear"></div>
+              </th>
+              {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+              {% for record in kwargs.record_value_list %}
+              {% if record.0|divisibleby:2 %}
+                <tr class="row1">
+              {% else %}
+                <tr class="row2">
+              {% endif %}
+                <td class="field-number_connections">#{{forloop.counter}}</td>
+                {% for field_value in record %}
+                <td class="field-number_connections">{{field_value}}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+            </table>
+          </div>
+
+          <p class="paginator">
+          All Records Above Related To {{base_search_item_value_map.application}} via Your Searching
+          </p>
+        {% else %}
+          <p class="paginator">
+            NO Data Found in Database via Your Search items.
+            <br>
+            You May 
+            <a href="{% url 'performance:search_index' %}">Change Your Searching Choices</a>
+            or 
+            <a href="/admin/performance/{{base_search_item_value_map.application}}information/">
+              Add a New Record
+            </a>
+          </p>
+        {% endif %}
+
+        </form>
+      </div>
+    </div>
+
+        
+    <br class="clear" />
+  </div>
+  <!-- END Content -->
+
+  <div id="footer"></div>
+
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+

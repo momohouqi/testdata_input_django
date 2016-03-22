@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% load static from staticfiles %}
+<html lang="en-us" >
+<head>
+  <title>Performance Searching | Architecture admin</title>
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/base.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/login.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/dashboard.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/changelists.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/forms.css" %}" />
+<script src="{% static "performance/js/jquery_download_from_web.js" %}"></script>
+<script src="{% static "performance/js/laydate/laydate.js" %}"></script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#application_name").change(function(){
+      var all_app_div = new Array();
+      {%for appname in applications %}
+        all_app_div[{{forloop.counter0}}] = "{{appname}}";
+      {%endfor%}
+      var checkValue=$("#application_name").val(); //get the Select Value
+      for(i in all_app_div){
+        if(all_app_div[i] == checkValue){
+          document.getElementById(all_app_div[i]).style.display='block';
+        }
+        else{
+          document.getElementById(all_app_div[i]).style.display="none";
+        }
+      }
+    });
+  });
+</script>
+<style type="text/css">
+  {%for appname in applications %}
+    #{{appname}} {
+      display: none;
+    }
+  {%endfor%}
+</style>
+
+<script type="text/javascript">
+  function validate_required(field,alerttxt){
+    with (field){
+      if (value==null||value==""){
+        alert(alerttxt);return false
+      }
+      else {return true}
+    }
+  }
+  function validate_form(thisform){
+    with (thisform){
+      if (validate_required(application_name,"Please Choose Application Name")==false){
+        application_name.focus();return false}
+      if (validate_required(project_names,"Please Choose Project Name")==false){
+        project_names.focus();return false}
+      if (validate_required(architectures,"Please Choose Architecture")==false){
+        architectures.focus();return false}
+      if (validate_required(cpu_types,"Please Choose CPU Type")==false){
+        cpu_types.focus();return false}
+      if (validate_required(begin_time,"Please Choose Begin Time")==false){
+        cpu_types.focus();return false}
+      if (validate_required(end_time,"Please Choose End Time")==false){
+        cpu_types.focus();return false}
+      if (validate_required(display_as,"Please Choose Display Form")==false){
+        display_as.focus();return false}
+    }
+  }
+</script>
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+
+<body class=" app-performance change-list">
+
+<!-- Container -->
+<div id="container">
+  <!-- Header -->
+  <div id="header">
+      <div id="branding">
+        <h1 id="site-name"><a href="/admin/">Architecture Admin</a></h1>
+      </div>
+      <div id="user-tools">
+              Welcome to Data Searching ... 
+              <a href="/admin/logout/">Log out</a>
+      </div>
+  </div>
+  <!-- END Header -->
+    
+
+  <div class="breadcrumbs">
+    <a href="/admin/">Home</a>
+    &rsaquo; <a href="/admin/performance/">Performance</a>
+    &rsaquo; Searching Index
+  </div>
+
+
+  <!-- Content -->
+  <div id="content" class="flex">
+    <br>
+    <div id="content-main">
+      <ul class="object-tools">
+          <li>
+            <a href="{% url 'performance:search_index' %}" class="addlink">
+              Reset All Chosen Options
+            </a>
+          </li>
+      </ul>
+      <div class="module" id="changelist">
+        <form id="changelist-form" action="{% url 'performance:search_result' %}" onsubmit="return validate_form(this)" method="post">
+          {% csrf_token %}
+          <div class="actions">
+          <p class="paginator">
+            <h3>  Base Searching Items</h3>
+          </p>
+          </div>
+
+          <div class="results">
+            <table cellpadding="0" cellspacing="0" id="result_list">
+            <thead>
+            <tr>
+              <th scope="col"  class="sortable column-application">
+                <div class="text"><a align='center'>Application Name</a></div>
+                <div class="clear"></div>
+              </th>
+              <th scope="col"  class="sortable column-project">
+                <div class="text"><a align='center'>Project Name</a></div>
+                <div class="clear"></div>
+              </th>
+              <th scope="col"  class="sortable column-architecture">
+                <div class="text"><a align='center'>Architecture</a></div>
+                <div class="clear"></div>
+              </th>
+              <th scope="col"  class="sortable column-cpu_type">
+                <div class="text"><a align='center'>CPU Type</a></div>
+                <div class="clear"></div>
+              </th>
+              <th scope="col"  class="sortable column-begintime">
+                <div class="text"><a align='center'>Start Time</a></div>
+                <div class="clear"></div>
+              </th>
+              <th scope="col"  class="sortable column-endtime">
+                <div class="text"><a align='center'>End Time</a></div>
+                <div class="clear"></div>
+              </th>
+              <th scope="col"  class="sortable column-formname">
+                <div class="text"><a align='center'>Display As</a></div>
+                <div class="clear"></div>
+              </th>
+            </tr>
+            </thead>
+
+            <tbody>
+              <td align='center'>
+                <select id="application_name" name="applications" class="row1">
+                  <option value="" disabled="disabled" selected="selected">Please Choose Application</option>
+                  {% for application in applications %}
+                  <option value="{{ application }}">{{ application }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+
+              <td align='center'>
+                <select name="project_names" class="row1">
+                  <option value="" disabled="disabled" selected="selected">Please Choose Project</option>
+                  {% for project_name in project_names %}
+                  <option value="{{ project_name }}">{{ project_name }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+
+              <td align='center'>
+                <select name="architectures" class="row1">
+                  <option value="" disabled="disabled" selected="selected">Please Choose Architecture</option>
+                  {% for architecture in architectures %}
+                  <option value="{{ architecture }}">{{ architecture }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+
+              <td align='center'>
+                <select name="cpu_types" class="row1">
+                  <option value="" disabled="disabled" selected="selected">Please Choose CPU Type</option>
+                  {% for cpu_type in cpu_types %}
+                  <!-- option value="{{ cpu_type }}"{% if cpu_type == "CP2"%} selected="selected"{% endif %} -->
+                  <option value="{{ cpu_type }}">{{ cpu_type }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+
+              <td align='center'>
+                <input name="begin_time" placeholder="Input Begin Time" class="laydate-icon" onclick="laydate({
+                  istime:true, format:'YYYY-MM-DD hh:mm:ss', min:'1990-01-01 00:00:00', max:laydate.now()})">
+              </td>
+
+              <td align='center'>
+                <input name="end_time" placeholder="Input End Time" class="laydate-icon" onclick="laydate({
+                istime:true, format:'YYYY-MM-DD hh:mm:ss', min:'1990-01-01 00:00:00', max:laydate.now()})">
+              </td>
+
+              <td align='center'>
+                <select name="display_as" class="row1">
+                  <option value="" disabled="disabled" selected="selected">Please Choose Display Form</option>
+                  <option value="table">table</option>
+                  <option value="figure">figure</option>
+                  <option value="graph">graph</option>
+                </select>
+              </td>
+
+            </tbody>
+            </table>
+          </div>
+
+          <p class="paginator">
+            <h3>Please Choose Your Application Name To Make a Further Configuration</h3>
+          </p>
+
+
+      <!-- Every Application Start from here -->
+      {% for appname, app_configs in app_infors.items %}
+      <div id={{appname}} class="results">
+        <br>
+
+        <table cellpadding="0" cellspacing="0" align='center'>
+          <!-- table header -->
+          <thead>
+            <tr align='center'>
+            {% for app_config in app_configs.keys %}
+              <th scope="col"  class="sortable column-config">
+                <div class="text"><a align='center'>{{app_config}}</a></div>
+                <div class="clear"></div>
+              </th>
+            {% endfor %}
+            </tr>
+          </thead>
+          <!-- table header -->
+
+          <tbody>
+          <tr>
+            {#% for config_values in app_configs.values %#}
+            {% for app_config, config_values in app_configs.items %}
+            <!-- every app's config starts from here -->
+            <td align='center'>
+            <select class="easyui-combobox" name="{{app_config}}">
+              <option value="all_options" selected="selected">all options</option>
+              {% for config_value in config_values %}
+              <option value="{{config_value}}">{{config_value}}</option>
+              {% endfor %}
+            </select>
+            </td>
+            <!-- every app's config ends in here -->
+            {% endfor %}
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Every Application End in here -->
+      {% endfor %}
+
+      <button id="submission" type="submit">Go</button>
+
+        </form>
+      </div>
+    </div>
+
+        
+    <br class="clear" />
+  </div>
+  <!-- END Content -->
+
+  <div id="footer"></div>
+
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+

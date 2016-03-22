@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% load static from staticfiles %}
+<html lang="en-us" >
+<head>
+<title>Select data caching information to change | Architecture admin</title>
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/base.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/login.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/dashboard.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/changelists.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "performance/css/forms.css" %}" />
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+<script type="text/javascript" src="{% static "performance/js/core.js" %}"></script>
+<script type="text/javascript" src="{% static "performance/js/jquery.js" %}"></script>
+<script type="text/javascript" src="{% static "performance/js/jquery.init.js" %}"></script>
+<script type="text/javascript" src="{% static "performance/js/actions.js" %}"></script>
+<script type="text/javascript" src="{% static "performance/js/table.sort.js" %}"></script>
+
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        $("tr input.action-select").actions();
+    });
+})(django.jQuery);
+</script>
+
+<script type="text/javascript">
+  window.onload = function()
+  {
+    new TableSorter("result_list");
+  }
+</script>
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+
+<body class=" app-performance model-datacachinginformation change-list">
+
+<!-- Container -->
+<div id="container">
+  <!-- Header -->
+  <div id="header">
+      <div id="branding">
+        <h1 id="site-name"><a href="/admin/">Architecture Admin</a></h1>
+      </div>
+      <div id="user-tools">
+              Welcome to Data Searching ... 
+              <a href="/admin/logout/">Log out</a>
+      </div>
+  </div>
+  <!-- END Header -->
+    
+
+  <div class="breadcrumbs">
+    <a href="/admin/">Home</a>
+    &rsaquo; <a href="/admin/performance/">Performance</a>
+    &rsaquo; error informations
+  </div>
+
+
+  <!-- Content -->
+  <div id="content" class="flex">
+    <br>
+    <div id="content-main">
+      <div class="module" id="changelist">
+        <form id="changelist-form" action="" method="post" novalidate><input type='hidden' name='' value='' />
+          <p class="paginator">
+            You Can Not Search Database without using any Search items. You May Want to:
+            <br>
+            <a href="{% url 'performance:search_index' %}">Make a New Data Searching </a>
+            or
+            <a href="/admin/"> Go Home </a>
+            <br>
+            {% if graph_error_message %}
+              Or: You must be choose the option of display as graph but error further configurations.
+            {% endif %}
+          </p>
+
+        </form>
+      </div>
+    </div>
+
+        
+    <br class="clear" />
+  </div>
+  <!-- END Content -->
+
+  <div id="footer"></div>
+
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+
