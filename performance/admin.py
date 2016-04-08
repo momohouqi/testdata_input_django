@@ -40,6 +40,16 @@ def duplicate_one_record(modeladmin, request, queryset):
 duplicate_one_record.short_description = "duplicate one selected record"
 
 
+class ModifyAdmin(admin.ModelAdmin):
+    save_on_top = True
+    # Following 3 setting is invalid, I do not why.
+    # So I should copy submit_line.html here, and modify them.
+    show_save_as_new = True
+    show_save_and_add_another = False
+    show_save_and_continue = False
+
+    actions = [duplicate_one_record]
+
 class BaseMachineInline(admin.StackedInline):
     fieldsets = [
             ('Machine Information', {
@@ -71,7 +81,7 @@ class DataCachingMachineInline(BaseMachineInline):
     min_num = 1
 
 
-class DataCachingAdmin(admin.ModelAdmin):
+class DataCachingAdmin(ModifyAdmin):
     inlines = [DataCachingMachineInline]
     fieldsets = (
             (None, {
@@ -94,7 +104,6 @@ class DataCachingAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -103,7 +112,7 @@ class LmbenchMachineInline(BaseMachineInline):
     min_num = 1
     max_num = 1
 
-class LmbenchAdmin(admin.ModelAdmin):
+class LmbenchAdmin(ModifyAdmin):
     inlines = [LmbenchMachineInline]
     fieldsets = (
             (None, {
@@ -127,7 +136,6 @@ class LmbenchAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -136,7 +144,7 @@ class ParsecMachineInline(BaseMachineInline):
     min_num = 1
     max_num = 1
 
-class ParsecAdmin(admin.ModelAdmin):
+class ParsecAdmin(ModifyAdmin):
     inlines = [ParsecMachineInline]
     fieldsets = (
             (None, {
@@ -159,7 +167,6 @@ class ParsecAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -179,7 +186,7 @@ class SiriusSuitMachineInline(BaseMachineInline):
     max_num = 1
 
 
-class SiriusSuitAdmin(admin.ModelAdmin):
+class SiriusSuitAdmin(ModifyAdmin):
     inlines = [SiriusSuitMachineInline]
     fieldsets = (
             (None, {
@@ -203,7 +210,6 @@ class SiriusSuitAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -213,7 +219,7 @@ class SparkTerasortMachineIncline(BaseMachineInline):
     max_num = 1
 
 
-class SparkTerasortAdmin(admin.ModelAdmin):
+class SparkTerasortAdmin(ModifyAdmin):
     inlines = [SparkTerasortMachineIncline]
     fieldsets = (
             (None, {
@@ -221,13 +227,17 @@ class SparkTerasortAdmin(admin.ModelAdmin):
                     'record_result_time'),('reference_link', 'cpu_type'), )
                 }
                 ),
+            ('Benchmark select', {
+                'fields': (('bench_type'),)
+                }
+                ),
             ('Project Information', {
                 'fields': (('project_name', 'project_id'),)
                 }
                 ),
-            ('Configration', {
+            ('Configuration', {
                 'fields': (('data_size','partition_size','processor_number',
-                    'workers'),)
+                    'workers', 'smt', 'cores', 'executor_memory'),)
                 }
                 ),
             ('Bottleneck (click for "yes")', {
@@ -236,7 +246,6 @@ class SparkTerasortAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -264,7 +273,7 @@ class SpecCPUMachineInline(BaseMachineInline):
     max_num = 1
 
 
-class SpecCPUAdmin(admin.ModelAdmin):
+class SpecCPUAdmin(ModifyAdmin):
     inlines = [SpecCPUMachineInline]
     fieldsets = (
             (None, {
@@ -287,7 +296,6 @@ class SpecCPUAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -296,7 +304,7 @@ class SpecjbbMachineInline(BaseMachineInline):
     min_num = 1
     max_num = 1
 
-class SpecjbbAdmin(admin.ModelAdmin):
+class SpecjbbAdmin(ModifyAdmin):
     inlines = [SpecjbbMachineInline]
     fieldsets = (
             (None, {
@@ -321,7 +329,6 @@ class SpecjbbAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -331,7 +338,7 @@ class SpecjvmMachineInline(BaseMachineInline):
     max_num = 1
 
 
-class SpecjvmAdmin(admin.ModelAdmin):
+class SpecjvmAdmin(ModifyAdmin):
     inlines = [SpecjvmMachineInline]
     fieldsets = (
             (None, {
@@ -355,7 +362,6 @@ class SpecjvmAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -364,7 +370,7 @@ class SplashMachineInline(BaseMachineInline):
     min_num = 1
     max_num = 1
 
-class SplashAdmin(admin.ModelAdmin):
+class SplashAdmin(ModifyAdmin):
     inlines = [SplashMachineInline]
     fieldsets = (
             (None, {
@@ -386,7 +392,6 @@ class SplashAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -396,7 +401,7 @@ class TpccMachineInline(BaseMachineInline):
     min_num = 1
     max_num = 2
 
-class TpccAdmin(admin.ModelAdmin):
+class TpccAdmin(ModifyAdmin):
     inlines = [TpccMachineInline]
     fieldsets = (
             (None, {
@@ -419,7 +424,6 @@ class TpccAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
 
 
 #######################################################################
@@ -439,7 +443,7 @@ class WebServingMachineInline(BaseMachineInline):
     min_num = 1
     max_num = 3
 
-class WebServingAdmin(admin.ModelAdmin):
+class WebServingAdmin(ModifyAdmin):
     inlines = [WebServingMachineInline]
     fieldsets = (
             (None, {
@@ -465,8 +469,6 @@ class WebServingAdmin(admin.ModelAdmin):
                 }
                 ),
             )
-    actions = [duplicate_one_record]
-
 
 # register the models into admin
 admin.site.register(DataCachingInformation, DataCachingAdmin)
