@@ -626,7 +626,7 @@ class SearchResultView(generic.TemplateView):
         if post_display_form == "graph":
             if len(graph_x_field_list) != 1:
                 self.template_name = 'performance/search/result_error.html'
-                kwargs['graph_error_message'] = "graph_error"
+                kwargs['graph_error_message'] = "If you show it as 'Graph', only one choices can be 'all options'."
             else:
                 self.template_name = 'performance/search/result_graph.html'
                 result_fields = self.apps_base_infors[
