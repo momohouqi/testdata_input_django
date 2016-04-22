@@ -16,7 +16,7 @@
 $(function () {
     $('#content-main').highcharts({
         chart: {
-          type: 'spline'
+          type: 'column'
         },
 
         title : {
@@ -49,7 +49,7 @@ $(function () {
         },
 
         plotOptions: {
-          spline: {
+          column: {
             marker: {
               enabled: true,
               // the dot size
@@ -71,7 +71,7 @@ $(function () {
             },
             {% endfor %}
           ],
-          color: 'red',
+          color: 'blue',
           marker: {
             enabled : true,
             fillColor : 'black'

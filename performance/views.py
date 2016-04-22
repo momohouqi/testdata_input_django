@@ -643,10 +643,32 @@ class SearchResultView(generic.TemplateView):
                 for record in figure_needed_record_list:
                     result_x_value = record.__getattribute__(graph_x_field)
                     result_y_value = record.__getattribute__(graph_y_field)
-                    result_fields_value_list.append((
+                    result_fields_value_list.append([
                         result_x_value, result_y_value,
                         {i: record.__getattribute__(i) for i
-                            in result_alias_fields},))
+                            in result_alias_fields},])
+                # If same x value has several y values, delete all of them but
+                # remain only one and replace its y value by theirs average value.
+                i = 0
+                while i < len(result_fields_value_list):
+                    j = i + 1
+                    count = 1
+                    sum = result_fields_value_list[i][1]
+                    while j < len(result_fields_value_list) and result_fields_value_list[i][0] == result_fields_value_list[j][0]:
+                        count += 1
+                        sum += result_fields_value_list[j][1]
+                        j += 1
+
+                    if count > 1:
+                        result_fields_value_list[i][1] = sum/count
+                        k = 1
+                        while k < count:
+                            result_fields_value_list.pop(i + 1)
+                            k += 1
+                        i = j
+                    else:
+                        i += 1
+
                 kwargs['graph_x_field'] = graph_x_field
                 kwargs['graph_y_field'] = graph_y_field
                 kwargs['result_fields_value_list'] = result_fields_value_list
