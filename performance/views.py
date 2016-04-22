@@ -661,6 +661,7 @@ class SearchResultView(generic.TemplateView):
 
                     if count > 1:
                         result_fields_value_list[i][1] = sum/count
+                        result_fields_value_list[i][2]["Tips"] = "Average value of {0} points".format(count)
                         k = 1
                         while k < count:
                             result_fields_value_list.pop(i + 1)
